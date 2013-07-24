@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebRTC Reference App</title>
+
+<meta http-equiv="X-UA-Compatible" content="chrome=1"/>
+
+<link rel="canonical" href="https://apprtc.appspot.com/?r=88472704"/>
+<link rel="stylesheet" href="css/main.css" />
+
+<script type="text/javascript" src="/_ah/channel/jsapi"></script>
+<script src="/js/main.js"></script>
+<!-- Load the polyfill to switch-hit between Chrome and Firefox -->
+<script src="/js/adapter.js"></script>
+
+</head>
+<body>
+<script type="text/javascript">
+  var channelToken = 'AHRlWrrjr3LlDokU2D2BVr4pFdZgdbP7ysbuGkxDCONGaRsM_5aZkFrLgf_Ml1Y3cHQc0gJs_92RvkygX3FlQkopXFncayWjLLuveQaPIPkwJrPaJAfhsks';
+  var me = '02043197';
+  var roomKey = '88472704';
+  var roomLink = 'https://apprtc.appspot.com/?r=88472704';
+  var initiator = 1;
+  var pcConfig = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
+  var pcConstraints = {"optional": [{"DtlsSrtpKeyAgreement": true}]};
+  var offerConstraints = {"optional": [], "mandatory": {}};
+  var mediaConstraints = {"audio": true, "video": {"mandatory": {}, "optional": []}};
+  var turnUrl = 'https://computeengineondemand.appspot.com/turn?username=02043197&key=4080218913';
+  var stereo = false;
+
+  setTimeout(initialize, 1);
+</script>
+<div id="container" ondblclick="enterFullScreen()"> 
+  <div id="card">
+    <div id="local">
+      <video id="localVideo" autoplay="autoplay" muted="true"/>
+    </div>
+    <div id="remote">
+      <video id="remoteVideo" autoplay="autoplay">
+      </video>
+      <div id="mini">
+        <video id="miniVideo" autoplay="autoplay" muted="true"/>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+<footer id="footer">
+</footer>
+</html>
