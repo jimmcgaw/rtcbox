@@ -1,3 +1,4 @@
+var testStream = null;
 $(function(){
     var hasGetUserMedia = function(){
         return !!(navigator.webkitGetUserMedia);
@@ -25,8 +26,9 @@ $(function(){
 
     Camera.prototype.loadMediaStream = function(stream) {
         console.log('!!');
-        var video = document.querySelector("video");
+        var video = document.querySelector("video.local");
         video.src = window.URL.createObjectURL(stream);
+        testStream = stream;
     };
 
     Camera.prototype.onUserMediaFail = function(){
