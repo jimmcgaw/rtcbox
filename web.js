@@ -19,13 +19,9 @@ app.get('/capture', function(request, response){
 var port = process.env.PORT || 5000;
 
 var crypto = require('crypto'),
-      https = require("https");
+      http = require("http");
 
-var privateKey = fs.readFileSync('privatekey.pem').toString();
-var certificate = fs.readFileSync('certificate.pem').toString();
-var options = {key: privateKey, cert: certificate};
-
-var server = https.createServer(options, app);
+var server = http.createServer(app);
 server.listen(port);
 console.log("Listening on port " + port);
 
