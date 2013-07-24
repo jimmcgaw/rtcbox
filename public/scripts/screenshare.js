@@ -6,7 +6,15 @@ $(function(){
     var Camera = function(){
         if (hasGetUserMedia()){
             navigator.webkitGetUserMedia(
-                { video: { mandatory: { chromeMediaSource: 'screen'} } },
+                { 
+                    video: {
+                        mandatory: {
+                            chromeMediaSource: 'screen',
+                            maxWidth: 640,
+                            maxHeight: 360
+                        }
+                    }
+                },
                 this.loadMediaStream,
                 this.onUserMediaFail
             );
