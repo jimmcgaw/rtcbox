@@ -19,8 +19,7 @@ app.get('/capture', function(request, response){
 var port = process.env.PORT || 5000;
 
 var crypto = require('crypto'),
-      http = require("http"),
-      https = require("https");
+      http = require("http");
 
 var privateKey = fs.readFileSync('server.key').toString();
 var certificate = fs.readFileSync('server.crt').toString();
@@ -33,6 +32,7 @@ if (process.env.NODE_ENV === "production"){
 	server = http.createServer(app);
 } else {
 	// local dev
+	var https = require("https")
 	server = https.createServer(options, app);
 }
 server.listen(port);
