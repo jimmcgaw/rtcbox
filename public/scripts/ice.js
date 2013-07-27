@@ -1,5 +1,5 @@
 var pcConfig = {"iceServers": [{"url": "stun:stun.l.google.com:19302"}]};
-var pc1, pc2, offer, answer;
+var localPeerConnection, remotePeerConnection, offer, answer;
 
 // Streams
 function onRemoteStreamAdded(event) {
@@ -15,13 +15,13 @@ function onRemoteStreamRemoved(event) {
 //==============
 
 function createPeerConnection() {
-  pc1 = new webkitRTCPeerConnection(pcConfig);
-  pc2 = new webkitRTCPeerConnection(pcConfig);
+  localPeerConnection = new webkitRTCPeerConnection(pcConfig);
+  remotePeerConnection = new webkitRTCPeerConnection(pcConfig);
 
-  pc1.onaddstream = onRemoteStreamAdded;
-  pc1.onremovestream = onRemoteStreamRemoved;
-  pc2.onaddstream = onRemoteStreamAdded;
-  pc2.onremovestream = onRemoteStreamRemoved;
+  localPeerConnection.onaddstream = onRemoteStreamAdded;
+  localPeerConnection.onremovestream = onRemoteStreamRemoved;
+  remotePeerConnection.onaddstream = onRemoteStreamAdded;
+  remotePeerConnection.onremovestream = onRemoteStreamRemoved;
 }
 
 //================================
@@ -30,34 +30,39 @@ var remoteScreenShare = document.querySelector("video.remote");
 
 console.log(remoteScreenShare);
 console.log(localScreenShare);
+
 createPeerConnection();
+
 setTimeout(function(){
   console.log('adding stream');
   console.log(testStream);
-  pc1.addStream(testStream);
+  debugger
+  localPeerConnection.addStream(testStream);
 },2000);
 
 //================================
 
-pc1.onicecandidate = function(event) {
-  console.log('pc1.onicecandidate');
+localPeerConnection.onicecandidate = function(event) {
+  console.log('localPeerConnection.onicecandidate');
   if (event.candidate) {
-    pc2.addIceCandidate(event.candidate);
+    var iceCandidate = new RTCIceCandidate(event.candidate);
+    remotePeerConnection.addIceCandidate(iceCandidate);
   } else {
     console.log('End of candidates.');
   }
 };
 
-pc2.onicecandidate = function(event) {
-  console.log('pc2.onicecandidate');
+remotePeerConnection.onicecandidate = function(event) {
+  console.log('remotePeerConnection.onicecandidate');
   if (event.candidate) {
-    pc1.addIceCandidate(event.candidate);
+    var iceCandidate = new RTCIceCandidate(event.candidate);
+    localPeerConnection.addIceCandidate(iceCandidate);
   } else {
     console.log('End of candidates.');
   }
 };
 
-pc1.createOffer(onOfferCreated, onError);
+localPeerConnection.createOffer(onOfferCreated, onError);
 
 function onError(err) {
   window.alert(err.message);
@@ -65,29 +70,29 @@ function onError(err) {
 
 function onOfferCreated(description) {
   offer = description;
-  pc1.setLocalDescription(offer, onPc1LocalDescriptionSet, onError);
+  localPeerConnection.setLocalDescription(offer, onlocalPeerConnectionLocalDescriptionSet, onError);
 }
 
-function onPc1LocalDescriptionSet() {
-  // after this function returns, pc1 will start firing icecandidate events
-  pc2.setRemoteDescription(offer, onPc2RemoteDescriptionSet, onError);
+function onlocalPeerConnectionLocalDescriptionSet() {
+  // after this function returns, localPeerConnection will start firing icecandidate events
+  remotePeerConnection.setRemoteDescription(offer, onremotePeerConnectionRemoteDescriptionSet, onError);
 }
 
-function onPc2RemoteDescriptionSet() {
-  pc2.createAnswer(onAnswerCreated, onError);
+function onremotePeerConnectionRemoteDescriptionSet() {
+  remotePeerConnection.createAnswer(onAnswerCreated, onError);
 }
 
 function onAnswerCreated(description) {
   answer = description;
-  pc2.setLocalDescription(answer, onPc2LocalDescriptionSet, onError);
+  remotePeerConnection.setLocalDescription(answer, onremotePeerConnectionLocalDescriptionSet, onError);
 }
 
-function onPc2LocalDescriptionSet() {
-  // after this function returns, you'll start getting icecandidate events on pc2
-  pc1.setRemoteDescription(answer, onPc1RemoteDescriptionSet, onError);
+function onremotePeerConnectionLocalDescriptionSet() {
+  // after this function returns, you'll start getting icecandidate events on remotePeerConnection
+  localPeerConnection.setRemoteDescription(answer, onlocalPeerConnectionRemoteDescriptionSet, onError);
 }
 
-function onPc1RemoteDescriptionSet() {
+function onlocalPeerConnectionRemoteDescriptionSet() {
   // window.alert('Yay, we finished signaling offers and answers');
 }
 

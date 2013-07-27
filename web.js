@@ -9,7 +9,11 @@ app.use("/scripts", express.static(__dirname + '/public/scripts'));
 app.use("/images", express.static(__dirname + '/public/images'));
 
 app.get('/', function(request, response) {
-  response.sendfile("index.html");
+  response.sendfile("templates/index.html");
+});
+
+app.get('/peersimpl', function(request, response) {
+  response.sendfile("templates/peersimpl.html");
 });
 
 app.get('/capture', function(request, response){
